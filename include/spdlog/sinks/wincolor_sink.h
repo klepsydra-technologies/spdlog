@@ -3,15 +3,17 @@
 
 #pragma once
 
-#include "spdlog/common.h"
-#include "spdlog/details/console_globals.h"
-#include "spdlog/details/null_mutex.h"
-#include "spdlog/sinks/sink.h"
+#include <spdlog/common.h>
+#include <spdlog/details/console_globals.h>
+#include <spdlog/details/null_mutex.h>
+#include <spdlog/sinks/sink.h>
 
 #include <memory>
 #include <mutex>
 #include <string>
-#include <unordered_map>
+#include <array>
+
+#include <spdlog/details/windows_include.h>
 #include <wincon.h>
 
 namespace spdlog {
@@ -52,16 +54,16 @@ protected:
     bool in_console_;
     bool should_do_colors_;
     std::unique_ptr<spdlog::formatter> formatter_;
-    std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
+    std::array<WORD, level::n_levels> colors_;
 
     // set foreground color and return the orig console attributes (for resetting later)
     WORD set_foreground_color_(WORD attribs);
 
     // print a range of formatted message to console
-    void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end);
+    void print_range_(const memory_buf_t &formatted, size_t start, size_t end);
 
     // in case we are redirected to file (not in console mode)
-    void write_to_file_(const fmt::memory_buffer &formatted);
+    void write_to_file_(const memory_buf_t &formatted);
 };
 
 template<typename ConsoleMutex>
