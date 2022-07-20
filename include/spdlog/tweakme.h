@@ -103,7 +103,9 @@
 // Uncomment to disable default logger creation.
 // This might save some (very) small initialization time if no default logger is needed.
 //
-// #define SPDLOG_DISABLE_DEFAULT_LOGGER
+#ifdef __freertos__ 
+#define SPDLOG_DISABLE_DEFAULT_LOGGER
+#endif
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////

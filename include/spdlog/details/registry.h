@@ -14,7 +14,11 @@
 #include <functional>
 #include <memory>
 #include <string>
+#ifdef __freertos__
+#include <map>
+#else
 #include <unordered_map>
+#endif
 #include <mutex>
 
 namespace spdlog {
@@ -89,7 +93,11 @@ private:
     void register_logger_(std::shared_ptr<logger> new_logger);
     std::mutex logger_map_mutex_, flusher_mutex_;
     std::recursive_mutex tp_mutex_;
+#ifdef __freertos__
+    std::map<std::string, std::shared_ptr<logger>> loggers_;
+#else
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
+#endif
     std::unique_ptr<formatter> formatter_;
     level::level_enum level_ = level::info;
     level::level_enum flush_level_ = level::off;
