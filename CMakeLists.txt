@@ -362,8 +362,12 @@ if(SPDLOG_INSTALL)
     # Include files
     # ---------------------------------------------------------------------------------------
     install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" PATTERN "fmt/bundled" EXCLUDE)
+    set(SPDLOG_TARGETS_TO_INSTALL spdlog_header_only)
+    if(KPSR_COMPILE_SPDLOG)
+      list(APPEND SPDLOG_TARGETS_TO_INSTALL spdlog)
+    endif()
     install(
-        TARGETS spdlog spdlog_header_only
+        TARGETS ${SPDLOG_TARGETS_TO_INSTALL}
         EXPORT spdlog
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

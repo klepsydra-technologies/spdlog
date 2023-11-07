@@ -3,7 +3,7 @@
 
 @PACKAGE_INIT@
 
-find_package(Threads REQUIRED)
+find_dependency(Threads)
 
 set(SPDLOG_FMT_EXTERNAL @SPDLOG_FMT_EXTERNAL@)
 set(SPDLOG_FMT_EXTERNAL_HO @SPDLOG_FMT_EXTERNAL_HO@)
