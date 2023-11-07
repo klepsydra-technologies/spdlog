@@ -1,7 +1,7 @@
 # Copyright(c) 2019 spdlog authors
 # Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-find_package(Threads REQUIRED)
+find_dependency(Threads)
 
 set(SPDLOG_FMT_EXTERNAL @SPDLOG_FMT_EXTERNAL@)
 set(config_targets_file @config_targets_file@)
