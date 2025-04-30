@@ -137,7 +137,7 @@ if(SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS)
     add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
     target_compile_definitions(spdlog PUBLIC SPDLOG_SHARED_LIB)
     if(MSVC)
-        target_compile_options(spdlog PUBLIC 
+        target_compile_options(spdlog PUBLIC
             $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<NOT:$<COMPILE_LANGUAGE:CUDA>>>:/wd4251 /wd4275>)
     endif()
     if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
@@ -241,6 +241,16 @@ if(SPDLOG_BUILD_EXAMPLE OR SPDLOG_BUILD_EXAMPLE_HO OR SPDLOG_BUILD_ALL)
 endif()
 
 if(SPDLOG_BUILD_TESTS OR SPDLOG_BUILD_TESTS_HO OR SPDLOG_BUILD_ALL)
+    # Coverage
+    if (CMAKE_BUILD_TYPE MATCHES Debug AND CMAKE_COMPILER_IS_GNUCXX)
+        include(cmake/CodeCoverage.cmake)
+        set(CODE_COVERAGE_VERBOSE ON)
+        append_coverage_compiler_flags()
+        set(COVERAGE_EXCLUDES "*build*" "tests")
+        setup_target_for_coverage_gcovr_xml(NAME coverage-xml EXECUTABLE make spdlog-utests test)
+        setup_target_for_coverage_gcovr_html(NAME coverage-html EXECUTABLE make spdlog-utests test)
+    endif ()
+
     message(STATUS "Generating tests")
     enable_testing()
     add_subdirectory(tests)
