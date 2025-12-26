@@ -39,7 +39,7 @@ endif()
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-if(CMAKE_SYSTEM_NAME MATCHES "CYGWIN" OR CMAKE_SYSTEM_NAME MATCHES "MSYS" OR CMAKE_SYSTEM_NAME MATCHES "MINGW")
+if(CMAKE_SYSTEM_NAME MATCHES "CYGWIN|MSYS|MINGW" OR TARGET_OS MATCHES "rtems6")
     set(CMAKE_CXX_EXTENSIONS ON)
 endif()
 
@@ -157,6 +157,16 @@ endif()
 
 find_package(Threads REQUIRED)
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
+
+# Add coverage compile flags before creating any targets.
+if (CMAKE_BUILD_TYPE MATCHES Debug AND CMAKE_COMPILER_IS_GNUCXX AND KPSR_WITH_CODE_METRICS)
+    set(KPSR_ENABLE_COVERAGE ON)
+    include(cmake/CodeCoverage.cmake)
+    set(CODE_COVERAGE_VERBOSE ON)
+    add_compile_options(-fprofile-update=atomic)
+    append_coverage_compiler_flags()
+endif ()
+
 # ---------------------------------------------------------------------------------------
 # Static/Shared library
 # ---------------------------------------------------------------------------------------
@@ -335,9 +345,18 @@ if(SPDLOG_BUILD_EXAMPLE OR SPDLOG_BUILD_EXAMPLE_HO OR SPDLOG_BUILD_ALL)
 endif()
 
 if(SPDLOG_BUILD_TESTS OR SPDLOG_BUILD_TESTS_HO OR SPDLOG_BUILD_ALL)
+    # Coverage
     message(STATUS "Generating tests")
     enable_testing()
     add_subdirectory(tests)
+    if (KPSR_ENABLE_COVERAGE)
+        set(COVERAGE_EXCLUDES "${CMAKE_BINARY_DIR}" "tests" "bench")
+        setup_target_for_coverage_gcovr_xml(NAME coverage-spdlog-xml EXECUTABLE ctest)
+        setup_target_for_coverage_gcovr_html(NAME coverage-spdlog-html EXECUTABLE ctest)
+        add_dependencies(coverage-spdlog-xml spdlog-utests)
+        add_dependencies(coverage-spdlog-html spdlog-utests)
+    endif()
+
 endif()
 
 if(SPDLOG_BUILD_BENCH OR SPDLOG_BUILD_ALL)

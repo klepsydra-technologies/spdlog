@@ -1,3 +1,15 @@
+### Klepsydra UT coverage
+
+```bash
+mkdir build && cd build/
+cmake .. -DSPDLOG_BUILD_TESTS=ON
+make coverage-html
+```
+
+Then go to the gcovr [report](build/coverage-html/index.html).
+
+---
+
 # spdlog
 
  
