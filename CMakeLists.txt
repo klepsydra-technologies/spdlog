@@ -159,7 +159,7 @@ find_package(Threads REQUIRED)
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
 # Add coverage compile flags before creating any targets.
-if (CMAKE_BUILD_TYPE MATCHES Debug AND CMAKE_COMPILER_IS_GNUCXX AND KPSR_WITH_CODE_METRICS)
+if (CMAKE_BUILD_TYPE MATCHES Debug AND CMAKE_COMPILER_IS_GNUCXX AND KPSR_WITH_CODE_METRICS AND SPDLOG_MASTER_PROJECT)
     set(KPSR_ENABLE_COVERAGE ON)
     include(cmake/CodeCoverage.cmake)
     set(CODE_COVERAGE_VERBOSE ON)
